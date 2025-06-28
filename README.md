@@ -1,5 +1,54 @@
 # 🔍 LinkedIn Job Scraping & Outreach Automation
 
+This `n8n` workflow is designed to automate the end-to-end process of B2B lead generation from LinkedIn job listings. It enables users to search for recent job postings, extract relevant company and contact details, verify contact information, generate personalized icebreakers using AI, and distribute the qualified leads into email and LinkedIn outreach platforms.
+
+## 🧭 How the Workflow Works
+
+1. **Manual Trigger**: Initiates the workflow manually for testing or batch runs.
+
+2. **Scrape LinkedIn Job Listings**:
+   - Calls the Apify API to scrape recent job listings based on predefined LinkedIn search URLs.
+   - The API returns a list of job listings with metadata such as job title, company name, company website, and job poster name.
+
+3. **Filter by Company Size**:
+   - Filters out companies with fewer than 200 employees to focus on mid-to-large size businesses.
+
+4. **Remove Duplicate Companies**:
+   - Deduplicates results based on company LinkedIn URLs to avoid redundant outreach.
+
+5. **Clean Company Name**:
+   - Strips common suffixes like "Inc.", "LLC", "Ltd" from company names for consistency.
+
+6. **Validate Job Poster Name**:
+   - Ensures the job poster's name exists before proceeding to email lookup.
+
+7. **Find Professional Email**:
+   - Sends first name, last name, and company website to the Prospeo API to retrieve valid professional email addresses.
+   - Filters only those contacts whose email status is "VALID".
+
+8. **Fetch and Parse Company Website**:
+   - Fetches the company's homepage HTML.
+   - Converts HTML to readable markdown to prepare content for AI analysis.
+
+9. **Generate Icebreaker Using OpenAI**:
+   - Sends the parsed company info to GPT-4.
+   - GPT-4 returns a short, specific, personalized compliment suitable for cold outreach.
+
+10. **Log Data to Google Sheets**:
+    - Appends all cleaned and enriched lead data into a Google Sheet.
+    - Fields include names, titles, emails, company info, and AI-generated icebreaker.
+
+11. **Send Leads to Smartlead and HeyReach**:
+    - Automatically posts the lead to both Smartlead and HeyReach campaigns using their respective APIs.
+    - The payload includes personal and company details, email, and icebreaker.
+
+12. **Status Update and Throttling**:
+    - Wait nodes ensure rate-limiting.
+    - Status updates are logged in another Google Sheet to track outreach success.
+
+13. **Optional: Email Verification and Fallbacks**:
+    - If Prospeo fails, the workflow optionally calls Reoon or AnymailFinder APIs for alternate verification or contact discovery.
+
 This `n8n` workflow automates the entire process of scraping job listings from LinkedIn, extracting decision-makers' names and emails, enriching them with AI-generated icebreakers, and sending the results to Google Sheets, Smartlead, and HeyReach.
 
 ---
